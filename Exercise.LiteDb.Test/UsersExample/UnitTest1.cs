@@ -1,5 +1,6 @@
 using LiteDB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace Exercise.LiteDb.Test
 {
@@ -7,7 +8,7 @@ namespace Exercise.LiteDb.Test
     public class UnitTest1
     {
         [TestMethod]
-        public void Example()
+        public void ExampleInsert()
         {
             using (var db = new LiteDatabase(@"FirstDatabase.db"))
             {
@@ -19,7 +20,7 @@ namespace Exercise.LiteDb.Test
                 {
                     Name = "Miroslav Mikus",
                     Phones = new string[] { "8000-0000", "9000-0000" },
-                    IsActive = true
+                    //IsActive = true
                 };
 
                 // Insert new customer document (Id will be auto-incremented)
@@ -33,8 +34,30 @@ namespace Exercise.LiteDb.Test
                 // Index document using a document property
                 customers.EnsureIndex(x => x.Name);
 
-                // Use Linq to query documents
-                var results = customers.Find(x => x.Name.StartsWith("Jo"));
+                //Use Linq to query documents
+               var results = customers.Find(x => x.Name.StartsWith("Jo"));
+            }
+        }
+
+        [TestMethod]
+        public void ExampleUpdate()
+        {
+            using (var db = new LiteDatabase(@"FirstDatabase.db"))
+            {
+                var customer = db.GetCollection<Customer>("customers");
+
+                var joanna = customer.Find(a => a.Id == 1).FirstOrDefault();
+
+                joanna.IsNotActive = true;
+
+                customer.Update(joanna);
+            }
+
+            using (var db = new LiteDatabase(@"FirstDatabase.db"))
+            {
+                var customer = db.GetCollection<Customer>("customers");
+
+                var joanna = customer.Find(a => a.Id == 1).FirstOrDefault();
             }
         }
     }

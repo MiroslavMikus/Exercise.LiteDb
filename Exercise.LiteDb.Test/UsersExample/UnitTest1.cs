@@ -1,5 +1,7 @@
 using LiteDB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
 using System.Linq;
 
 namespace Exercise.LiteDb.Test
@@ -35,7 +37,7 @@ namespace Exercise.LiteDb.Test
                 customers.EnsureIndex(x => x.Name);
 
                 //Use Linq to query documents
-               var results = customers.Find(x => x.Name.StartsWith("Jo"));
+                var results = customers.Find(x => x.Name.StartsWith("Jo"));
             }
         }
 
@@ -59,6 +61,74 @@ namespace Exercise.LiteDb.Test
 
                 var joanna = customer.Find(a => a.Id == 1).FirstOrDefault();
             }
+        }
+
+        [TestMethod]
+        [TestCategory("Performance")]
+        public void Add1000Customers()
+        {
+            var dbName = Guid.NewGuid().ToString() + ".db";
+
+            using (var db = new LiteDatabase(dbName))
+            {
+                var customers = Enumerable.Range(1, 10000).Select(a => new Customer
+                {
+                    Name = Guid.NewGuid().ToString(),
+                    Birthday = DateTime.Now - TimeSpan.FromDays(a)
+                });
+
+                var repo = db.GetCollection<Customer>("customers");
+
+                foreach (var cus in customers)
+                {
+                    repo.Insert(cus);
+                }
+            }
+            File.Delete(dbName);
+        }
+
+        [TestMethod]
+        [TestCategory("Performance")]
+        public void Add1000CustomersCollection()
+        {
+            var dbName = Guid.NewGuid().ToString() + ".db";
+
+            using (var db = new LiteDatabase(dbName))
+            {
+                var customers = Enumerable.Range(1, 10000).Select(a => new Customer
+                {
+                    Name = Guid.NewGuid().ToString(),
+                    Birthday = DateTime.Now - TimeSpan.FromDays(a)
+                });
+
+                var repo = db.GetCollection<Customer>("customers");
+
+                repo.Insert(customers);
+            }
+
+            File.Delete(dbName);
+        }
+
+        [TestMethod]
+        [TestCategory("Performance")]
+        public void Add1000CustomersBulk()
+        {
+            var dbName = Guid.NewGuid().ToString() + ".db";
+
+            using (var db = new LiteDatabase(dbName))
+            {
+                var customers = Enumerable.Range(1, 10000).Select(a => new Customer
+                {
+                    Name = Guid.NewGuid().ToString(),
+                    Birthday = DateTime.Now - TimeSpan.FromDays(a)
+                });
+
+                var repo = db.GetCollection<Customer>("customers");
+
+                repo.InsertBulk(customers);
+            }
+
+            File.Delete(dbName);
         }
     }
 }

@@ -29,5 +29,24 @@ namespace Exercise.LiteDb.Test.StoreComplexObjectExample
                 });
             }
         }
+
+        [TestMethod]
+        public void TestRepository()
+        {
+            using (var repo = new LiteRepository(@"SecondDatabase.db"))
+            {
+                repo.Insert(new ComplexCustomer()
+                {
+                    Birthday = DateTime.Now,
+                    IsNotActive = true,
+                    Name = "Miroslav",
+                    Address = new Address
+                    {
+                        City = "Oberaudorf",
+                        Street = "Bahnhof"
+                    }
+                }, "customers");
+            }
+        }
     }
 }

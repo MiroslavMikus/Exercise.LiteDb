@@ -21,8 +21,6 @@ namespace Exercise.LiteDb.Test.ReferenceDocumentsExample
         [TestMethod]
         public void TestStoreReferences()
         {
-            File.Delete("ThirdDatabase.db");
-
             using (var db = new LiteRepository("ThirdDatabase.db"))
             {
                 var customer = new Customer()
@@ -39,11 +37,7 @@ namespace Exercise.LiteDb.Test.ReferenceDocumentsExample
 
                 db.Insert(order, "orders");
             }
-        }
 
-        [TestMethod]
-        public void TestRestoreReferences()
-        {
             using (var db = new LiteRepository("ThirdDatabase.db"))
             {
                 var order = db.Query<Order>("orders")
@@ -54,6 +48,8 @@ namespace Exercise.LiteDb.Test.ReferenceDocumentsExample
 
                 Assert.AreEqual("Miro",order.Customer.Name);
             }
+
+            File.Delete("ThirdDatabase.db");
         }
     }
 }

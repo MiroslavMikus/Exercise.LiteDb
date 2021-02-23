@@ -14,12 +14,11 @@ namespace Exercise.LiteDb.Test.Filter
     [TestClass]
     public class FilterTests
     {
-        [TestMethod]
-        public void FilterTest()
-        {
-            var dbName = "CustomerTest.db";
-            //File.Delete(dbName);
+        private const string dbName = "CustomerTest.db";
 
+        [ClassInitialize]
+        public static void Startup()
+        {
             var customers = Enumerable.Range(1, 200).Select(a => new Customer
             {
                 Name = Guid.NewGuid().ToString(),
@@ -35,6 +34,20 @@ namespace Exercise.LiteDb.Test.Filter
             var repo = db.GetCollection<Customer>("customers");
 
             repo.InsertBulk(customers);
+        }
+
+        [ClassInitialize]
+        public static void Cleanup()
+        {
+            File.Delete(dbName);
+        }
+
+        [TestMethod]
+        public void FilterTest()
+        {
+            using var db = new LiteDatabase(dbName);
+
+            var repo = db.GetCollection<Customer>("customers");
 
             // Typesafe search
             var customer1 = repo.Find(a => a.Name == "Customer").FirstOrDefault();
@@ -49,6 +62,10 @@ namespace Exercise.LiteDb.Test.Filter
             var bsonRepo = db.GetCollection("customers");
 
             var customer3 = bsonRepo.Find(query).FirstOrDefault();
+
+            var testmp = customer3["Name"];
+
+            customer3["_id"].AsInt32.Should().Be(customer1.Id);
         }
     }
 }

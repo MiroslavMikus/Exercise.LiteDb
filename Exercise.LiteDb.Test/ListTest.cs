@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Exercise.LiteDb.Test.FilesExample
 {
@@ -27,6 +28,8 @@ namespace Exercise.LiteDb.Test.FilesExample
 
                 db.Insert(entry, "someList");
             }
+
+            File.Delete(dbName);
         }
 
         [TestMethod]
@@ -49,6 +52,8 @@ namespace Exercise.LiteDb.Test.FilesExample
 
                 db.Insert(entry, "someList");
             }
+
+            File.Delete(dbName);
         }
 
         class ListEntry

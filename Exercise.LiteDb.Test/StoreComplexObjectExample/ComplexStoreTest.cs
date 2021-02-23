@@ -1,18 +1,19 @@
 ﻿using LiteDB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace Exercise.LiteDb.Test.StoreComplexObjectExample
 {
     [TestClass]
     public class ComplexStoreTest
     {
+        private const string dbName = @"SecondDatabase.db";
+
         [TestMethod]
         public void TestStore()
         {
-            using (var db = new LiteDatabase(@"SecondDatabase.db"))
+            using (var db = new LiteDatabase(dbName))
             {
                 var customer = db.GetCollection<ComplexCustomer>("customers");
 
@@ -33,7 +34,7 @@ namespace Exercise.LiteDb.Test.StoreComplexObjectExample
         [TestMethod]
         public void TestRepository()
         {
-            using (var repo = new LiteRepository(@"SecondDatabase.db"))
+            using (var repo = new LiteRepository(dbName))
             {
                 repo.Insert(new ComplexCustomer()
                 {
@@ -47,6 +48,12 @@ namespace Exercise.LiteDb.Test.StoreComplexObjectExample
                     }
                 }, "customers");
             }
+        }
+
+        [ClassCleanup]
+        public static void Cleanup()
+        {
+            File.Delete(dbName);
         }
     }
 }

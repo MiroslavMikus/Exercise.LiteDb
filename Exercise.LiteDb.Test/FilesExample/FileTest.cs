@@ -35,6 +35,8 @@ namespace Exercise.LiteDb.Test.FilesExample
 
                 var test = stream.ReadToEnd();
             }
+
+            File.Delete(dbName);
         }
     }
 }
